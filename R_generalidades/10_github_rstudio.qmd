@@ -1,0 +1,24 @@
+---
+title: "Github_Rstudio"
+author:
+  - name: Garcia Rios Santiago
+    email: santiago_gr@ciencias.unam.mx
+format: 
+  html:
+    page-layout: full # ocupar toda la página
+    lang: en  # figure, note, warning, code
+    embed-resources: true # self-contained file
+    # code-fold: true # retraer código
+    # code-summary: "Mostrar código"
+execute:
+  echo: true  
+  warning: true
+toc: true
+# bibliography: references.bib  
+number-sections: true
+---
+
+## Pasos
+
+1.  `Stage` files
+2.  `commit` cambios --\> creates a perm

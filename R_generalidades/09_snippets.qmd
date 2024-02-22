@@ -1,0 +1,39 @@
+---
+title: "Introducción a R"
+author:
+  - name: Garcia Rios Santiago
+    email: santiago_gr@ciencias.unam.mx
+format: 
+  html:
+    page-layout: full # ocupar toda la página
+    lang: es  # figure, note, warning, code
+    # code-fold: true # retraer código
+    # code-summary: "Mostrar código"
+execute:
+  echo: true  
+  warning: true
+---
+
+Los snippets se pueden ejecutar con `"nombre de snippet" -> shift + tab`.
+
+## r
+
+-   lib / lib_if
+-   if
+-   el
+-   ei
+-   fun
+-   for
+-   while
+-   apply/lapply/sapply/etc
+-   ts / prettydate
+-   var_asign / var_pipe /
+-   hdr
+-   ggplot2,dplyr, purrr, rlang, shiny, htmltools, tags, testthat, learnr
+
+## Markdown
+
+-   `[`
+-   `![`
+-   `r`
+-   `r_eval`
