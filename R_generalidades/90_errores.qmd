@@ -1,12 +1,12 @@
 ---
-title: "Github_Rstudio"
+title: "Errores"
 author:
   - name: Garcia Rios Santiago
     email: santiago_gr@ciencias.unam.mx
 format: 
   html:
     page-layout: full # ocupar toda la página
-    lang: en  # figure, note, warning, code
+    lang: es  # figure, note, warning, code
     embed-resources: true # self-contained file
     # code-fold: true # retraer código
     # code-summary: "Mostrar código"
@@ -18,8 +18,12 @@ toc: true
 number-sections: true
 ---
 
-## Pasos
+## Librerías y paquetes problemas
 
-1.  `Stage` files
-2.  `commit` cambios --\> creates a permanent snapshot
-3.  `push`to github (`pull` if working with other people)
+Este código me ayudó cuando tenía problemas con mi internet y no podía instalar paquetes. 
+Probablemente tiene que ver con mis puertos.
+```{r cran_mirror, eval=FALSE}
+
+options(repos="https://CRAN.R-project.org")
+
+```

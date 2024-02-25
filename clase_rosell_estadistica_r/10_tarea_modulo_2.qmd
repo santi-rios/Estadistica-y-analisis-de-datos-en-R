@@ -1,0 +1,513 @@
+---
+title: "10_tarea_modulo_2"
+author:
+  - name: Garcia Rios Santiago
+    email: santiago_gr@ciencias.unam.mx
+format: 
+  html:
+    page-layout: full # ocupar toda la página
+    lang: es  # figure, note, warning, code
+    embed-resources: true # self-contained file
+    # code-fold: true # retraer código
+    # code-summary: "Mostrar código"
+execute:
+  echo: true  
+  warning: true
+toc: true
+# bibliography: references.bib  
+number-sections: true
+---
+
+## Efecto de droga en el peso de ratas
+
+Se realiza un estudio para ver el efecto de una droga en el peso de ratas. Se quiere determinar si la
+droga tiene un impacto en el peso al cabo de tres meses. Para ello, se miden 10 ratas antes y después
+del tratamiento con la nueva droga. Realiza una comparación entre los pesos (en gramos) antes y
+después del tratamiento. Revisa cuidadosamente las opciones para realizar pruebas para la comparación
+de medias de forma que puedas elegir la prueba que mejor contesta a la pregunta de investigación.
+Menciona la prueba elegida y realízala a mano (calculando un valor crítico y tomando una decisión
+y también calculando con R un p-value y tomando una decisión). Usa un nivel de significancia de 5%. Interpreta tus resultados. No olvides reportar cuáles son tu hipótesis nula y alternativa. 
+
+Los datos de los ratones 1 a 10 son: 
+- antes: 200.1, 190.9, 192.7, 213, 241.4, 196.9, 172.2, 185.5, 205.2, 193.7 
+- después: 392.9, 393.2, 345.1, 393, 434, 427.9, 422, 383.9, 392.3,352.2
+
+### Respuesta
+
+Se trata de un problema de *medidas repetidas* (las mismas ratas antes y después del tratamiento) al comparar los pesos de las ratas antes y después del tratamiento con la droga. Entonces, usaremos una prueba t de medidas repetidas.
+
+#### Hipótesis
+
+- Hipótesis nula ($H_0$): La media del peso de las ratas antes del tratamiento es igual a la media del peso de las ratas después del tratamiento (la droga no tiene efecto en el peso de las ratas). $H_0 : \mu_1 = \mu2$. (mu1 y mu2 corresponden al antes y después)
+
+- Hipótesis alternativa ($H_a$): La media del peso de las ratas antes del tratamiento no es igual a la media del peso de las ratas después del tratamiento (la droga tiene un efecto en el peso de las ratas). $H_a : \mu_1 \neq \mu2$
+
+
+#### Cálculos
+```{r 10_prueba_t_medidas_repetidas}
+
+# Datos
+peso_antes <- c(200.1, 190.9, 192.7, 213, 241.4, 196.9, 172.2, 185.5, 205.2, 193.7)
+peso_despues <- c(392.9, 393.2, 345.1, 393, 434, 427.9, 422, 383.9, 392.3, 352.2)
+
+# Prueba t muestras pareadas
+resultado_t_pareada <- t.test(peso_antes, peso_despues, 
+                              paired = TRUE, # Indica muestras pareadas
+                              alternative = "two.sided" # Prueba de dos colas de acuerdo a nuestra H_a
+                              )
+
+print(resultado_t_pareada)
+
+# valor de t
+# grados de libertad (df)
+# p_value
+# intervalo de confianza para la diferencia de medias
+
+```  
+  
+
+Al comparar el valor p resultante contra nuestro nivel de significancia ($\alpha = 0.05$), revisamos los siguiente: 
+- Si el valor p es menor que 0.05, se rechaza la hipótesis nula en favor de la hipótesis alternativa, lo que indica que hay evidencia suficiente para afirmar que la droga tiene un efecto en el peso de las ratas. - Si el valor p es mayor que 0.05, no se rechaza la hipótesis nula, lo que indica que no hay evidencia suficiente para afirmar que la droga tiene un efecto en el peso de las ratas.
+
+Dado que nuestro valor p es significativamente menor que el nivel de significancia de 0.05, rechazamos la hipótesis nula. Esto indica que hay evidencia estadísticamente significativa para afirmar que la droga tiene un impacto en el peso de las ratas después del tratamiento.  
+
+#### Conclusión
+
+la droga parece tener un efecto considerable en aumentar el peso de las ratas durante el periodo de estudio de tres meses.
+
+## Calcular IC para diferencia de medias
+
+Calcula un intervalo de confianza al 95% para la diferencia de las medias a mano. ¿Cómo interpretas el
+intervalo de confianza? ¿Es congruente tu intepretación del intervalo de confianza con la prueba de
+hipótesis previa?
+
+Utilizaremos la siguiente fórmula:
+
+
+$ IC= dˉ ±t_(α/2)  (S_d \div sqrt(n)) $
+
+donde:
+
+- dˉ: media de las diferencias entre las dos muestras (peso después - peso antes).
+- tα/2: es el valor crítico de t para un intervalo de confianza del 95%
+− n−1 grados de libertad (donde n es el número de pares de muestras, en este caso 10).
+- S_d: es la desviación estándar de las diferencias entre las dos muestras.
+- n es el tamaño de la muestra.
+
+
+```python
+Copy code
+import numpy as np
+
+# Calcular la diferencia de pesos
+diferencias = np.array(peso_despues) - np.array(peso_antes)
+
+# Calcular la media y la desviación estándar de las diferencias
+media_diferencias = np.mean(diferencias)
+desviacion_std_diferencias = np.std(diferencias, ddof=1)
+
+# Tamaño de la muestra
+n = len(diferencias)
+
+# Valor crítico de t para un IC del 95% y n-1 grados de libertad
+t_critico = stats.t.ppf(1 - 0.05 / 2, n - 1)
+
+# Calcular el intervalo de confianza
+margen_error = t_critico * (desviacion_std_diferencias / np.sqrt(n))
+IC_inferior = media_diferencias - margen_error
+IC_superior = media_diferencias + margen_error
+
+media_diferencias, desviacion_std_diferencias, t_critico, margen_error, IC_inferior, IC_superior
+
+```
+
+Result
+(194.49,
+ 29.451106374237728,
+ 2.2621571627409915,
+ 21.068052332754778,
+ 173.42194766724523,
+ 215.55805233275478)
+
+El intervalo de confianza del 95% para la diferencia de las medias de los pesos de las ratas antes y después del tratamiento es aproximadamente de 173.42 a 215.56 gramos.
+
+Este intervalo de confianza significa que estamos 95% seguros de que la diferencia real en la media de los pesos de las ratas, debido al tratamiento con la droga, está entre 173.42 y 215.56 gramos. Dado que este intervalo no incluye el 0, refuerza la conclusión de que la droga tiene un efecto significativo en el peso de las ratas. La interpretación del intervalo de confianza es congruente con los resultados de la prueba de hipótesis, donde rechazamos la hipótesis nula y concluimos que hay una diferencia significativa en las medias de los pesos antes y después del tratamiento. Esto significa que el tratamiento con la droga tiene un efecto estadísticamente significativo en aumentar el peso de las ratas.
+
+## Vacaciones en CDMX
+
+Se postula que el número promedio de días que una persona toma de vacaciones al año en oficinas
+del gobierno de la CDMX es mayor a 15. Se toma una muestra aleatoria del registro de los días de
+vacaciones de 100 empleados de estas oficinas y se obtiene una media de 18 días con una varianza de
+9.5 días. Somete a prueba esta hipótesis (el promedio de vacaciones es mayor a 15 días) a un nivel alfa
+de 0.05. Realiza la prueba a mano usando valores críticos y también calculando a mano el p-value.
+
+
+utilizaremos una prueba t de una muestra para comparar la media muestral con una media poblacional conocida, y tenemos una muestra grande (n ≥ 30) y la varianza poblacional es desconocida.
+
+### Hipótesis
+
+- Hipótesis nula ($H_0$): El número promedio de días de vacaciones es 15 días o menos. μ≤15.
+- Hipótesis alternativa (H1): El número promedio de días de vacaciones es mayor a 15 días. μ>15.
+
+### Estadístico de prueba
+
+La estadística de prueba t se calcula con:
+
+$t = (xˉ −μ_0) / (s(sqrt(n)))$
+ 
+donde:
+
+- xˉ : es la media muestral de los días de vacaciones (18 días).
+- μ_0 : es la media poblacional bajo la hipótesis nula (15 días).
+-s es la desviación estándar muestral, que es la raíz cuadrada de la varianza muestral (raíz cuadrada de 9.5).
+- n es el tamaño de la muestra (100).
+
+Vamos a calcular el valor t y luego usarlo para determinar el valor crítico y el valor p. Finalmente, compararemos el valor p con el nivel de significancia (α=0.05) para tomar una decisión respecto a la hipótesis nula.
+
+```python
+# Datos 
+
+media_muestral = 18
+media_nula = 15
+varianza_muestral = 9.5
+n = 100
+desviacion_std_muestral = varianza_muestral ** 0.5
+
+# Calcular estadístico de t
+t_valor = (media_muestral - media_nula) / (desviacion_std_muestral / (n ** 0.5))
+
+# Calcular p value para 1 cola
+p_value = 1 - stats.t.cdf(t_valor, df=n-1)
+
+t_valor, p_value
+```
+Result
+(9.733285267845753, 2.220446049250313e-16)
+
+El valor de la estadística de prueba t calculado es aproximadamente 9.73, y el valor p es aproximadamente 
+2.22 × 10−16.
+
+Dado que el valor p es significativamente menor que el nivel de significancia (α=0.05), rechazamos la hipótesis nula. Esto indica que hay evidencia estadísticamente significativa para afirmar que el número promedio de días que una persona toma de vacaciones al año en oficinas del gobierno de la Ciudad de México es mayor a 15 días.
+
+
+
+## Loop de números aleatorios
+
+Construye un bucle en R que te permita obtener 10 números aleatorios de distribuciones normales con medias
+`0, 10, 20 y 30` y los almacene en una LISTA (cada elemento de la lista contiene un vector con los 10
+números aleatorios tomados de estas distribuciones normales). Hint: deberás buscar la forma de recorrer
+los elementos de un vector en donde almacenarás las medias de las distribuciones indicadas.
+
+
+
+Se puede realiza con un bucle `for` que recorra un vector con las medias `(0, 10, 20, 30)`. Después, en cada iteración, generamos 10 números aleatorios de una distribución normal con la media de la iteración actual `i` y una desviación estándar constante. Al final, los números aleatorios se almacenan en un vector que luego se añade a una lista.
+
+::: {.callout-note}
+**set.seed**
+
+La función `set.seed()` se usa para crear resultados reproducibles cuando usamos código que crea variables aleatorias. Con esta función, nos garantizamos de crear los mismos valores aleatorios cada vez que corramos el script. Se utiliza de la forma: `set.seed(seed)`, donde `seed` es cualquier número. 
+
+:::
+
+
+```{r 10_loop_numeros_aleatorios}
+
+# Hacer este código reproducible con set.seed()
+
+set.seed(123)
+
+# Hacer un vector con las medias de interés
+medias <- c(0, 10, 20, 30)
+
+# Iniciar una lista vacía donde vamos a guardar los vectores con números aleatorios
+numeros_aleatorios <- list()
+
+# Loop para generar los números aleatorios con distribución normal
+for (media in medias) {
+  # Generar 10 números aleatorios con la media actual + distribución normal + desviación estándar de 13 (usar cualquier constante)
+  numeros <- rnorm(10, mean = media, sd = 13)
+  
+  # Agregar a la lista el vector de números aleatorios
+  numeros_aleatorios[[length(numeros_aleatorios) + 1]] <- numeros
+}
+
+# El resultado es que la variable numeros_aleatorios tiene la lista de vectores con los números aleatorios 
+```
+
+
+::: {.callout-note}
+### Resumen del loop
+
+1. Hacer un vector con los números deseados (medias).
+2. Iniciar una lista vacía (`numeros_aleatorios`). Aquí se van a guardar los vectores de números aleatorios. 
+3. Usar un `loop for` que itere cada media del vector (del paso 1). 
+4. Usar `rnorm` para generar 10 números aleatorios de una distribución normal con la media de la iteración actual. 
+5. Se añaden los números aleatorios que se generaron a la lista `numeros_aleatorios`. 
+6. Nuestra lista ahora contiene vectores generados a partir de una distribución normal con 10 elementos aleatorios y la media especificada. 
+:::
+
+## Función de media if-else
+
+Construye una función en R que le devuelva al usuario una media si se introduce una variable continua
+(con un contenido de valores continuos en dicha variable), o el valor categórico con mayor frecuencia
+(una especie de moda) si se introduce una variable categórica (la variable categórica contiene valores
+discretos). Hint: Vas a necesitar utilizar la pareja if-else en tu código
+
+
+
+La lógica detrás de la función es primero determinar si la variable es continua o categórica. Una forma de hacerlo es verificar si la variable es de tipo numérico o no. Luego, según el tipo de variable, la función calculará y devolverá la media o la moda, respectivamente.
+
+Aquí tienes un ejemplo de cómo podría ser esta función en R:
+
+r
+Copy code
+# Definir la función
+resumen_variable <- function(variable) {
+  # Verificar si la variable es numérica (continua)
+  if (is.numeric(variable)) {
+    # Calcular y devolver la media
+    return(mean(variable))
+  } else {
+    # Calcular y devolver la moda (valor categórico más frecuente)
+    valores_unicos <- unique(variable)
+    max_frecuencia <- 0
+    moda <- valores_unicos[1]
+    for (valor in valores_unicos) {
+      frecuencia_actual <- sum(variable == valor)
+      if (frecuencia_actual > max_frecuencia) {
+        max_frecuencia <- frecuencia_actual
+        moda <- valor
+      }
+    }
+    return(moda)
+  }
+}
+Esta función resumen_variable hace lo siguiente:
+
+Comprueba si la variable introducida es numérica utilizando is.numeric(variable). Esto es para determinar si la variable es continua.
+Si la variable es numérica, calcula y devuelve su media con mean(variable).
+Si la variable no es numérica (y por lo tanto se considera categórica), la función calcula la moda. Esto se hace encontrando el valor único con la mayor frecuencia en la variable. La función itera sobre todos los valores únicos de la variable, cuenta la frecuencia de cada uno y mantiene el valor con la mayor frecuencia como la moda.
+Finalmente, la función devuelve la moda para las variables categóricas.
+Esta función es bastante básica y asume que los datos no contienen valores NA. Si tuvieras que manejar valores NA, podrías añadir argumentos adicionales a las funciones mean() y sum() para controlar cómo se tratan estos valores.
+
+User
+6. Se estudia el dimorfismo sexual en una especie de gecko. Se mide la longitud hocico-cloaca en cm de
+10 machos y 8 hembras. ¿Hay diferencias en la longitud entre los sexos usando alfa de 0.05? Aborda
+esta pregunta mediante un análisis paramétrico y también mediante una prueba de aleatorización. Los
+datos son: Machos: 11.3, 11.1, 10.7, 11.0, 12.0, 11.4, 11.2, 11.6, 11.7, 11.7 Hembras: 11.0, 11.7, 10.5,
+10.6, 11.1, 11.1, 10.8, 10.7
+ChatGPT
+Para abordar la pregunta de si hay diferencias en la longitud hocico-cloaca entre machos y hembras de una especie de gecko, primero utilizaremos un análisis paramétrico, específicamente una prueba t de muestras independientes, ya que se compara la media de dos grupos diferentes. Después, realizaremos una prueba de aleatorización como método no paramétrico para verificar si los resultados son consistentes.
+
+Análisis Paramétrico (Prueba t de Muestras Independientes)
+Las hipótesis para la prueba t de muestras independientes serían:
+
+Hipótesis nula (H0): No hay diferencia en la media de longitud hocico-cloaca entre machos y hembras.
+
+�
+0
+:
+�
+�
+�
+�
+ℎ
+�
+�
+=
+�
+ℎ
+�
+�
+�
+�
+�
+�
+H 
+0
+​
+ :μ 
+machos
+​
+ =μ 
+hembras
+​
+ 
+
+Hipótesis alternativa (H1): Hay una diferencia en la media de longitud hocico-cloaca entre machos y hembras.
+
+�
+1
+:
+�
+�
+�
+�
+ℎ
+�
+�
+≠
+�
+ℎ
+�
+�
+�
+�
+�
+�
+H 
+1
+​
+ :μ 
+machos
+​
+ 
+
+=μ 
+hembras
+​
+ 
+
+Vamos a calcular el valor t y el valor p para la prueba t de muestras independientes con los datos proporcionados.
+
+Prueba de Aleatorización
+La prueba de aleatorización es un enfoque no paramétrico que no asume una distribución específica de los datos. En esta prueba, comparamos la diferencia observada en las medias entre los dos grupos con una distribución de diferencias de medias generada al reasignar aleatoriamente las etiquetas de grupo a los datos muchas veces (simulando la idea de "no hay diferencia").
+
+Primero, realizaremos el análisis paramétrico y luego procederemos con la prueba de aleatorización.
+
+Finished analyzing
+Always expand output?
+python
+Copy code
+from scipy import stats
+
+# Datos proporcionados
+machos = [11.3, 11.1, 10.7, 11.0, 12.0, 11.4, 11.2, 11.6, 11.7, 11.7]
+hembras = [11.0, 11.7, 10.5, 10.6, 11.1, 11.1, 10.8, 10.7]
+
+# Análisis paramétrico: Prueba t de muestras independientes
+t_stat, p_value = stats.ttest_ind(machos, hembras)
+
+t_stat, p_value
+Result
+(2.3642270193899004, 0.031048626881502273)
+El análisis paramétrico mediante la prueba t de muestras independientes resultó en un valor t de aproximadamente 2.36 y un valor p de aproximadamente 0.031.
+
+Dado que el valor p es menor que el nivel de significancia de 0.05, rechazamos la hipótesis nula. Esto indica que hay una diferencia estadísticamente significativa en la media de longitud hocico-cloaca entre machos y hembras de la especie de gecko estudiada.
+
+Prueba de Aleatorización
+Ahora procederemos a realizar una prueba de aleatorización. Esta prueba implica calcular la diferencia de medias observada entre los dos grupos y luego compararla con una distribución de diferencias de medias generadas al reasignar aleatoriamente los datos de grupo muchas veces.
+
+El objetivo es ver cuántas veces la diferencia de medias aleatorizadas es tan extrema o más extrema que la diferencia de medias observada, lo que nos dará un valor p empírico para evaluar la significancia estadística.
+
+Vamos a realizar esta prueba de aleatorización. ​​
+
+Finished analyzing
+Always expand output?
+python
+Copy code
+import numpy as np
+
+# Calcular la diferencia observada de medias entre los grupos
+dif_observada = np.mean(machos) - np.mean(hembras)
+
+# Combinar todos los datos
+datos_combinados = np.concatenate([machos, hembras])
+
+# Número de permutaciones
+n_permutaciones = 10000
+contador = 0
+
+for _ in range(n_permutaciones):
+    # Permutar los datos combinados
+    permutados = np.random.permutation(datos_combinados)
+    
+    # Dividir en nuevos grupos
+    machos_perm = permutados[:len(machos)]
+    hembras_perm = permutados[len(machos):]
+    
+    # Calcular la diferencia de medias de la permutación
+    dif_perm = np.mean(machos_perm) - np.mean(hembras_perm)
+    
+    # Contar cuántas veces la diferencia de medias permutada es igual o mayor que la observada
+    if dif_perm >= dif_observada:
+        contador += 1
+
+# Calcular el valor p de la prueba de aleatorización
+p_value_aleatorizacion = contador / n_permutaciones
+
+p_value_aleatorizacion
+Result
+0.0183
+La prueba de aleatorización resultó en un valor p de aproximadamente 0.0183.
+
+Este resultado indica que, basado en la reasignación aleatoria de los datos entre los dos grupos y comparando la diferencia de medias observada con la distribución de diferencias generada a través de la aleatorización, sólo en el 1.83% de las permutaciones se obtuvo una diferencia de medias tan extrema o más extrema que la observada. Dado que este valor p es menor que el nivel de significancia de 0.05, también rechazamos la hipótesis nula en el análisis no paramétrico, lo que sugiere que hay una diferencia significativa en la longitud hocico-cloaca entre machos y hembras.
+
+Ambos métodos, el paramétrico y el no paramétrico, conducen a la misma conclusión de que existen diferencias estadísticamente significativas en la longitud hocico-cloaca entre los sexos en la especie de gecko estudiada. Esto refuerza la evidencia de dimorfismo sexual en cuanto a la longitud hocico-cloaca en esta especie. ​​
+
+User
+por último, por favor dame un resumen de cómo se resolvieron los 6 ejercicios. Solo necesito un esqueleto de cómo se resolvieron con el fin de poder pasarle a otra persona este esqueleto con los pasos a seguir para que pueda resolver los 6 ejercicios sin necesariamente darle las respuestas ni el código completo, solo lo necesario para que pueda resolverlo.
+ChatGPT
+Claro, aquí tienes un esqueleto de cómo se resolvieron los 6 ejercicios, diseñado para guiar a alguien a través de los pasos sin proporcionar las respuestas o el código completo:
+
+Ejercicio 1: Efecto de una Droga en el Peso de Ratones
+Objetivo: Determinar si una droga tiene impacto en el peso de ratas después de tres meses.
+
+Hipótesis:
+Nula (H0): No hay diferencia en el peso antes y después del tratamiento.
+Alternativa (H1): Hay una diferencia en el peso antes y después del tratamiento.
+Prueba Estadística: Utilizar una prueba t de muestras emparejadas.
+Pasos:
+Recoger los pesos antes y después del tratamiento.
+Realizar la prueba t de muestras emparejadas.
+Interpretar el valor p y los resultados.
+Ejercicio 2: Intervalo de Confianza para la Diferencia de Medias
+Objetivo: Calcular un intervalo de confianza al 95% para la diferencia de medias de los pesos antes y después del tratamiento.
+
+Pasos:
+Calcular la media y la desviación estándar de las diferencias.
+Usar la fórmula del intervalo de confianza para muestras emparejadas.
+Interpretar el intervalo de confianza y su relación con la hipótesis.
+Ejercicio 3: Promedio de Días de Vacaciones en Oficinas del Gobierno
+Objetivo: Probar si el promedio de días de vacaciones es mayor a 15.
+
+Hipótesis:
+Nula (H0): El promedio de días ≤ 15.
+Alternativa (H1): El promedio de días > 15.
+Prueba Estadística: Realizar una prueba t de una muestra.
+Pasos:
+Calcular la estadística t usando la media muestral, la media poblacional bajo H0, y la desviación estándar muestral.
+Determinar el valor p.
+Comparar el valor p con el nivel de significancia para tomar una decisión.
+Ejercicio 4: Generación de Números Aleatorios en R
+Objetivo: Obtener 10 números aleatorios de distribuciones normales con medias específicas y almacenarlos en una lista.
+
+Pasos:
+Crear un vector con las medias deseadas.
+Usar un bucle para generar números aleatorios de distribuciones normales con esas medias.
+Almacenar cada vector de números aleatorios en una lista.
+Ejercicio 5: Función en R para Media o Moda
+Objetivo: Crear una función que devuelva la media de variables continuas o la moda de variables categóricas.
+
+Pasos:
+Verificar si la variable es numérica (continua) o no (categórica).
+Si es continua, calcular y devolver la media.
+Si es categórica, calcular y devolver la moda.
+Ejercicio 6: Dimorfismo Sexual en Geckos
+Objetivo: Determinar si hay diferencias en la longitud hocico-cloaca entre sexos.
+
+Análisis Paramétrico:
+Hipótesis:
+Nula (H0): No hay diferencia entre machos y hembras.
+Alternativa (H1): Hay una diferencia entre machos y hembras.
+Realizar una prueba t de muestras independientes.
+Análisis No Paramétrico (Prueba de Aleatorización):
+Generar una distribución de diferencias de medias a través de la aleatorización.
+Comparar la diferencia observada con esta distribución para obtener un valor p.
+Pasos Generales para la Prueba de Aleatorización:
+
+Calcular la diferencia de medias observada.
+Combinar los datos y realizar permutaciones.
+Calcular la diferencia de medias para cada permutación.
+Determinar el porcentaje de diferencias permutadas que son tan extremas como la observada.
+Este esqueleto proporciona una guía general sin entrar en detalles específicos o soluciones, permitiendo a la persona trabajar en los ejercicios de forma independiente.
