@@ -255,20 +255,17 @@ discretos). Hint: Vas a necesitar utilizar la pareja if-else en tu código
 
 
 
-La lógica detrás de la función es primero determinar si la variable es continua o categórica. Una forma de hacerlo es verificar si la variable es de tipo numérico o no. Luego, según el tipo de variable, la función calculará y devolverá la media o la moda, respectivamente.
+Primero tenemos que determinar si la variable es continua o categórica (variable es de tipo numérico o no). Luego, con if-else, la función calculará y devolverá la media o la moda.
 
-Aquí tienes un ejemplo de cómo podría ser esta función en R:
+```{r 10_funcion_ifelse}
 
-r
-Copy code
-# Definir la función
-resumen_variable <- function(variable) {
-  # Verificar si la variable es numérica (continua)
+funcion_ifelse_moda <- function(variable) {
+  # Comprobar si la variable es numérica==continua
   if (is.numeric(variable)) {
     # Calcular y devolver la media
     return(mean(variable))
   } else {
-    # Calcular y devolver la moda (valor categórico más frecuente)
+    # Calcular y devolver la moda
     valores_unicos <- unique(variable)
     max_frecuencia <- 0
     moda <- valores_unicos[1]
@@ -282,105 +279,42 @@ resumen_variable <- function(variable) {
     return(moda)
   }
 }
-Esta función resumen_variable hace lo siguiente:
 
-Comprueba si la variable introducida es numérica utilizando is.numeric(variable). Esto es para determinar si la variable es continua.
-Si la variable es numérica, calcula y devuelve su media con mean(variable).
-Si la variable no es numérica (y por lo tanto se considera categórica), la función calcula la moda. Esto se hace encontrando el valor único con la mayor frecuencia en la variable. La función itera sobre todos los valores únicos de la variable, cuenta la frecuencia de cada uno y mantiene el valor con la mayor frecuencia como la moda.
-Finalmente, la función devuelve la moda para las variables categóricas.
+```
+
+::: {.callout-note}
+### Resumen de la función
+
+1. Verificar si la variable introducida es numérica(continua) con is.numeric(variable). 
+2. Si la variable es numérica, calcula y devuelve su media con mean(variable).
+3. Else=Si la variable no es numérica (categórica), la función calcula la moda. Esto se hace encontrando el valor único con la mayor frecuencia en la variable. 
+4. La función itera sobre todos los valores únicos de la variable, cuenta la frecuencia de cada uno y mantiene el valor con la mayor frecuencia como la moda.
+5. Finalmente, la función devuelve la moda para las variables categóricas.
+
 Esta función es bastante básica y asume que los datos no contienen valores NA. Si tuvieras que manejar valores NA, podrías añadir argumentos adicionales a las funciones mean() y sum() para controlar cómo se tratan estos valores.
+:::
 
-User
-6. Se estudia el dimorfismo sexual en una especie de gecko. Se mide la longitud hocico-cloaca en cm de
+
+## Dimorfismo sexual
+
+Se estudia el dimorfismo sexual en una especie de gecko. Se mide la longitud hocico-cloaca en cm de
 10 machos y 8 hembras. ¿Hay diferencias en la longitud entre los sexos usando alfa de 0.05? Aborda
 esta pregunta mediante un análisis paramétrico y también mediante una prueba de aleatorización. Los
-datos son: Machos: 11.3, 11.1, 10.7, 11.0, 12.0, 11.4, 11.2, 11.6, 11.7, 11.7 Hembras: 11.0, 11.7, 10.5,
-10.6, 11.1, 11.1, 10.8, 10.7
-ChatGPT
-Para abordar la pregunta de si hay diferencias en la longitud hocico-cloaca entre machos y hembras de una especie de gecko, primero utilizaremos un análisis paramétrico, específicamente una prueba t de muestras independientes, ya que se compara la media de dos grupos diferentes. Después, realizaremos una prueba de aleatorización como método no paramétrico para verificar si los resultados son consistentes.
+datos son: 
+- Machos: `11.3, 11.1, 10.7, 11.0, 12.0, 11.4, 11.2, 11.6, 11.7, 11.7` 
+- Hembras: `11.0, 11.7, 10.5,10.6, 11.1, 11.1, 10.8, 10.7`
 
-Análisis Paramétrico (Prueba t de Muestras Independientes)
-Las hipótesis para la prueba t de muestras independientes serían:
+Para abordar la pregunta de si hay diferencias en la longitud hocico-cloaca entre machos y hembras de una especie de gecko, primero utilizaremos un análisis paramétrico, 
 
-Hipótesis nula (H0): No hay diferencia en la media de longitud hocico-cloaca entre machos y hembras.
+### Análisis paramétrico
 
-�
-0
-:
-�
-�
-�
-�
-ℎ
-�
-�
-=
-�
-ℎ
-�
-�
-�
-�
-�
-�
-H 
-0
-​
- :μ 
-machos
-​
- =μ 
-hembras
-​
- 
+Con análisis paramétrico ($t$ de muestras independientes) podemos comparar la media de dos grupos diferentes.
 
-Hipótesis alternativa (H1): Hay una diferencia en la media de longitud hocico-cloaca entre machos y hembras.
+- Hipótesis nula (H_0): No hay diferencia en la media de longitud hocico-cloaca entre machos y hembras. 
+μ machos =μ hembras
+- Hipótesis alternativa (H1): Hay una diferencia en la media de longitud hocico-cloaca entre machos y hembras. H1 :μ machos != μ hembras
 
-�
-1
-:
-�
-�
-�
-�
-ℎ
-�
-�
-≠
-�
-ℎ
-�
-�
-�
-�
-�
-�
-H 
-1
-​
- :μ 
-machos
-​
- 
-
-=μ 
-hembras
-​
- 
-
-Vamos a calcular el valor t y el valor p para la prueba t de muestras independientes con los datos proporcionados.
-
-Prueba de Aleatorización
-La prueba de aleatorización es un enfoque no paramétrico que no asume una distribución específica de los datos. En esta prueba, comparamos la diferencia observada en las medias entre los dos grupos con una distribución de diferencias de medias generada al reasignar aleatoriamente las etiquetas de grupo a los datos muchas veces (simulando la idea de "no hay diferencia").
-
-Primero, realizaremos el análisis paramétrico y luego procederemos con la prueba de aleatorización.
-
-Finished analyzing
-Always expand output?
-python
-Copy code
-from scipy import stats
-
+```python
 # Datos proporcionados
 machos = [11.3, 11.1, 10.7, 11.0, 12.0, 11.4, 11.2, 11.6, 11.7, 11.7]
 hembras = [11.0, 11.7, 10.5, 10.6, 11.1, 11.1, 10.8, 10.7]
@@ -391,21 +325,22 @@ t_stat, p_value = stats.ttest_ind(machos, hembras)
 t_stat, p_value
 Result
 (2.3642270193899004, 0.031048626881502273)
+```
+
 El análisis paramétrico mediante la prueba t de muestras independientes resultó en un valor t de aproximadamente 2.36 y un valor p de aproximadamente 0.031.
 
-Dado que el valor p es menor que el nivel de significancia de 0.05, rechazamos la hipótesis nula. Esto indica que hay una diferencia estadísticamente significativa en la media de longitud hocico-cloaca entre machos y hembras de la especie de gecko estudiada.
+Dado que el valor p es menor que el nivel de significancia de 0.05, rechazamos la hipótesis nula. Esto indica que hay una diferencia estadísticamente significativa en la media de longitud hocico-cloaca entre machos y hembras de la especie de gecko estudiada. 
 
-Prueba de Aleatorización
-Ahora procederemos a realizar una prueba de aleatorización. Esta prueba implica calcular la diferencia de medias observada entre los dos grupos y luego compararla con una distribución de diferencias de medias generadas al reasignar aleatoriamente los datos de grupo muchas veces.
+
+### Aleatorización
+
+Vamos a hacer una prueba no paramétrica que no asume una distribución específica de nuestros datos. En esta prueba, comparamos la diferencia observada en las medias entre los dos grupos con una distribución de diferencias de medias generada al reasignar aleatoriamente las etiquetas de grupo a los datos muchas veces (simulando la idea de "no hay diferencia").
+
+Esta prueba implica calcular la diferencia de medias observada entre los dos grupos y luego compararla con una distribución de diferencias de medias generadas al reasignar aleatoriamente los datos de grupo muchas veces.
 
 El objetivo es ver cuántas veces la diferencia de medias aleatorizadas es tan extrema o más extrema que la diferencia de medias observada, lo que nos dará un valor p empírico para evaluar la significancia estadística.
 
-Vamos a realizar esta prueba de aleatorización. ​​
-
-Finished analyzing
-Always expand output?
-python
-Copy code
+```python
 import numpy as np
 
 # Calcular la diferencia observada de medias entre los grupos
@@ -439,75 +374,155 @@ p_value_aleatorizacion = contador / n_permutaciones
 p_value_aleatorizacion
 Result
 0.0183
+```
+
 La prueba de aleatorización resultó en un valor p de aproximadamente 0.0183.
 
 Este resultado indica que, basado en la reasignación aleatoria de los datos entre los dos grupos y comparando la diferencia de medias observada con la distribución de diferencias generada a través de la aleatorización, sólo en el 1.83% de las permutaciones se obtuvo una diferencia de medias tan extrema o más extrema que la observada. Dado que este valor p es menor que el nivel de significancia de 0.05, también rechazamos la hipótesis nula en el análisis no paramétrico, lo que sugiere que hay una diferencia significativa en la longitud hocico-cloaca entre machos y hembras.
 
 Ambos métodos, el paramétrico y el no paramétrico, conducen a la misma conclusión de que existen diferencias estadísticamente significativas en la longitud hocico-cloaca entre los sexos en la especie de gecko estudiada. Esto refuerza la evidencia de dimorfismo sexual en cuanto a la longitud hocico-cloaca en esta especie. ​​
 
-User
-por último, por favor dame un resumen de cómo se resolvieron los 6 ejercicios. Solo necesito un esqueleto de cómo se resolvieron con el fin de poder pasarle a otra persona este esqueleto con los pasos a seguir para que pueda resolver los 6 ejercicios sin necesariamente darle las respuestas ni el código completo, solo lo necesario para que pueda resolverlo.
-ChatGPT
-Claro, aquí tienes un esqueleto de cómo se resolvieron los 6 ejercicios, diseñado para guiar a alguien a través de los pasos sin proporcionar las respuestas o el código completo:
 
-Ejercicio 1: Efecto de una Droga en el Peso de Ratones
+
+# RESUMEN
+
+## Ejercicio 1
+
+Efecto de una Droga en el Peso de Ratones
 Objetivo: Determinar si una droga tiene impacto en el peso de ratas después de tres meses.
 
-Hipótesis:
-Nula (H0): No hay diferencia en el peso antes y después del tratamiento.
-Alternativa (H1): Hay una diferencia en el peso antes y después del tratamiento.
-Prueba Estadística: Utilizar una prueba t de muestras emparejadas.
-Pasos:
-Recoger los pesos antes y después del tratamiento.
-Realizar la prueba t de muestras emparejadas.
-Interpretar el valor p y los resultados.
-Ejercicio 2: Intervalo de Confianza para la Diferencia de Medias
-Objetivo: Calcular un intervalo de confianza al 95% para la diferencia de medias de los pesos antes y después del tratamiento.
+**Hipótesis**:
+- Nula (H0): No hay diferencia en el peso antes y después del tratamiento.
+- Alternativa (H1): Hay una diferencia en el peso antes y después del tratamiento.
+
+*Prueba Estadística*: Utilizar una prueba t de muestras pareadas.
+
+
+## Ejercicio 2
+
+Intervalo de Confianza para la Diferencia de Medias
+*Objetivo*: Calcular un intervalo de confianza al 95% para la diferencia de medias de los pesos antes y después del tratamiento.
 
 Pasos:
-Calcular la media y la desviación estándar de las diferencias.
-Usar la fórmula del intervalo de confianza para muestras emparejadas.
-Interpretar el intervalo de confianza y su relación con la hipótesis.
-Ejercicio 3: Promedio de Días de Vacaciones en Oficinas del Gobierno
-Objetivo: Probar si el promedio de días de vacaciones es mayor a 15.
+- Calcular la media y la desviación estándar de las diferencias.
+- Usar la fórmula del intervalo de confianza para muestras emparejadas.
+- Interpretar el intervalo de confianza y su relación con la hipótesis.
 
-Hipótesis:
-Nula (H0): El promedio de días ≤ 15.
-Alternativa (H1): El promedio de días > 15.
-Prueba Estadística: Realizar una prueba t de una muestra.
-Pasos:
-Calcular la estadística t usando la media muestral, la media poblacional bajo H0, y la desviación estándar muestral.
-Determinar el valor p.
-Comparar el valor p con el nivel de significancia para tomar una decisión.
-Ejercicio 4: Generación de Números Aleatorios en R
-Objetivo: Obtener 10 números aleatorios de distribuciones normales con medias específicas y almacenarlos en una lista.
+## Ejercicio 3
+
+Promedio de Días de Vacaciones en Oficinas del Gobierno
+*Objetivo*: Probar si el promedio de días de vacaciones es mayor a 15.
+
+*Hipótesis*:
+- Nula (H0): El promedio de días ≤ 15.
+- Alternativa (H1): El promedio de días > 15.
+
+**Prueba Estadística**: Realizar una prueba t de una muestra.
 
 Pasos:
-Crear un vector con las medias deseadas.
-Usar un bucle para generar números aleatorios de distribuciones normales con esas medias.
-Almacenar cada vector de números aleatorios en una lista.
-Ejercicio 5: Función en R para Media o Moda
-Objetivo: Crear una función que devuelva la media de variables continuas o la moda de variables categóricas.
+- Calcular la estadística t usando la media muestral, la media poblacional bajo H0, y la desviación estándar muestral.
+- Determinar el valor p.
+- Comparar el valor p con el nivel de significancia para tomar una decisión.
+
+## Ejercicio 4
+
+Generación de Números Aleatorios en R
+*Objetivo*: Obtener 10 números aleatorios de distribuciones normales con medias específicas y almacenarlos en una lista.
 
 Pasos:
-Verificar si la variable es numérica (continua) o no (categórica).
-Si es continua, calcular y devolver la media.
-Si es categórica, calcular y devolver la moda.
-Ejercicio 6: Dimorfismo Sexual en Geckos
-Objetivo: Determinar si hay diferencias en la longitud hocico-cloaca entre sexos.
+- Crear un vector con las medias deseadas.
+- Usar un bucle para generar números aleatorios de distribuciones normales con esas medias.
+- Almacenar cada vector de números aleatorios en una lista.
 
-Análisis Paramétrico:
-Hipótesis:
-Nula (H0): No hay diferencia entre machos y hembras.
-Alternativa (H1): Hay una diferencia entre machos y hembras.
-Realizar una prueba t de muestras independientes.
-Análisis No Paramétrico (Prueba de Aleatorización):
-Generar una distribución de diferencias de medias a través de la aleatorización.
-Comparar la diferencia observada con esta distribución para obtener un valor p.
+
+## Ejercicio 5
+
+Función en R para Media o Moda
+*Objetivo*: Crear una función que devuelva la media de variables continuas o la moda de variables categóricas.
+
+Pasos:
+- Verificar si la variable es numérica (continua) o no (categórica).
+- Si es continua, calcular y devolver la media.
+- Si es categórica, calcular y devolver la moda.
+
+## Ejercicio 6
+
+Dimorfismo Sexual en Geckos
+*Objetivo*: Determinar si hay diferencias en la longitud hocico-cloaca entre sexos.
+
+**Análisis Paramétrico**:
+*Hipótesis*:
+- Nula (H0): No hay diferencia entre machos y hembras.
+- Alternativa (H1): Hay una diferencia entre machos y hembras.
+- Realizar una prueba t de muestras independientes.
+
+**Análisis No Paramétrico (Prueba de Aleatorización)**:
+- Generar una distribución de diferencias de medias a través de la aleatorización.
+- Comparar la diferencia observada con esta distribución para obtener un valor p.
+
 Pasos Generales para la Prueba de Aleatorización:
 
-Calcular la diferencia de medias observada.
-Combinar los datos y realizar permutaciones.
-Calcular la diferencia de medias para cada permutación.
-Determinar el porcentaje de diferencias permutadas que son tan extremas como la observada.
-Este esqueleto proporciona una guía general sin entrar en detalles específicos o soluciones, permitiendo a la persona trabajar en los ejercicios de forma independiente.
+- Calcular la diferencia de medias observada.
+- Combinar los datos y realizar permutaciones.
+- Calcular la diferencia de medias para cada permutación.
+- Determinar el porcentaje de diferencias permutadas que son tan extremas como la observada.
+
+
+
+# Ejercicios Individuales
+
+## Función Espiral
+
+Una espiral se puede generar utilizando coordenadas polares, donde cada punto de la espiral tiene un ángulo y un radio que cambian de manera continua. La función para generar un patrón de espiral podría verse así:
+
+```{r 10_funcion_espiral}
+
+generar_espiral <- function(num_puntos = 1000, incremento = 0.1) {
+  # Crear vectores vacíos para las coordenadas x e y
+  x <- numeric(num_puntos)
+  y <- numeric(num_puntos)
+  
+  # Generar puntos de la espiral
+  for (i in 1:num_puntos) {
+    # Calcular el ángulo y el radio
+    angulo <- incremento * i
+    radio <- incremento * i
+    
+    # Convertir de coordenadas polares a cartesianas
+    x[i] <- radio * cos(angulo)
+    y[i] <- radio * sin(angulo)
+  }
+  
+  # Dibujar la espiral
+  plot(x, y, type = 'l', xlab = 'X', ylab = 'Y', main = 'Patrón de Espiral')
+}
+
+# Ejemplo de uso
+generar_espiral()
+
+```
+
+## Función Moiré
+
+Un patrón de Moiré se puede generar superponiendo dos conjuntos de líneas o patrones con ligeras variaciones entre ellos. 
+
+```{r 10_funcion_moire}
+
+generar_moire <- function(num_lineas = 50, desplazamiento = 0.1) {
+  plot(1, type = "n", xlab = "", ylab = "", xlim = c(-10, 10), ylim = c(-10, 10))
+  abline(h = -10:10, col = "grey")
+  
+  for (i in 1:num_lineas) {
+    # Dibujar líneas horizontales con un pequeño desplazamiento
+    abline(h = i * desplazamiento - 10, col = "blue")
+    # Dibujar líneas verticales con un pequeño desplazamiento
+    abline(v = i * desplazamiento - 10, col = "red")
+  }
+  
+  title(main = "Patrón de Moiré")
+}
+
+# Ejemplo de uso
+generar_moire()
+
+```
